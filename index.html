@@ -8,7 +8,7 @@
     <!-- Favicon SVG Logo GR Community -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Ccircle cx='100' cy='100' r='96' fill='%23050505'/%3E%3Ccircle cx='100' cy='100' r='86' fill='none' stroke='%23ffffff' stroke-width='7'/%3E%3Ctext x='62' y='98' font-family='Georgia, serif' font-weight='bold' font-size='54' fill='%23ffffff'%3EG%3C/text%3E%3Ctext x='92' y='114' font-family='Georgia, serif' font-weight='bold' font-size='54' fill='%23ffffff'%3ER%3C/text%3E%3Cpath d='M 70 119 C 87 123, 113 63, 129 66' fill='none' stroke='%23ffffff' stroke-width='4.5' stroke-linecap='round'/%3E%3Ccircle cx='69' cy='118' r='3.5' fill='%23ffffff'/%3E%3Ccircle cx='130' cy='67' r='3.5' fill='%23ffffff'/%3E%3Ctext x='100' y='147' text-anchor='middle' font-family='sans-serif' font-size='16' letter-spacing='0.5' fill='%23ffffff'%3Ecommunity%3C/text%3E%3C/svg%3E">
 
-    <!-- Google Fonts: Plus Jakarta Sans, Playfair Display & JetBrains Mono -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Playfair+Display:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -16,8 +16,9 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Lucide Icons CDN -->
+    <!-- Lucide Icons & html2canvas (untuk ubah HTML jadi gambar) -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <script>
         tailwind.config = {
@@ -54,7 +55,6 @@
     </script>
 
     <style>
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.3); border-radius: 9999px; }
@@ -62,25 +62,19 @@
 
         .tabular-nums { font-variant-numeric: tabular-nums; }
 
-        /* Ambient Background Mesh */
         .ambient-bg {
             background-image: 
                 radial-gradient(at 0% 0%, rgba(245, 158, 11, 0.08) 0px, transparent 50%),
                 radial-gradient(at 100% 0%, rgba(16, 185, 129, 0.08) 0px, transparent 50%);
         }
 
-        /* Luxury Card Shimmer */
         .luxury-card {
             background: linear-gradient(135deg, #131824 0%, #090C13 100%);
             border: 1px solid rgba(251, 191, 36, 0.28);
         }
 
-        /* Print Styling for Clean PDF / Paper Export */
         @media print {
-            html, body { 
-                background: #ffffff !important; 
-                color: #000000 !important; 
-            }
+            html, body { background: #ffffff !important; color: #000000 !important; }
             .no-print { display: none !important; }
             .print-only { display: block !important; }
             .print-container { 
@@ -105,7 +99,6 @@
     <header class="sticky top-0 z-30 backdrop-blur-xl bg-white/85 dark:bg-obsidian-900/85 border-b border-slate-200/80 dark:border-white/10 no-print transition-colors">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-18 flex items-center justify-between gap-3">
             
-            <!-- Brand / Group Title & Logo -->
             <div class="flex items-center gap-3.5 min-w-0">
                 <div onclick="openEditBrandModal()" title="Klik untuk ganti logo atau nama kas" class="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black border-2 border-amber-400/60 flex items-center justify-center shadow-gold-glow shrink-0 overflow-hidden cursor-pointer hover:scale-105 transition-transform">
                     <div id="header-logo-container" class="w-full h-full flex items-center justify-center"></div>
@@ -121,24 +114,26 @@
                 </div>
             </div>
 
-            <!-- Action Controls -->
             <div class="flex items-center gap-2 shrink-0">
-                <!-- Theme Toggle -->
-                <button onclick="toggleTheme()" class="p-2.5 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-amber-300 border border-slate-200/80 dark:border-white/10 transition-all" title="Ganti Tema (Dark / Light)">
+                <button onclick="toggleTheme()" class="p-2.5 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-amber-300 border border-slate-200/80 dark:border-white/10 transition-all" title="Ganti Tema">
                     <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
                     <i data-lucide="moon" class="w-4 h-4 block dark:hidden"></i>
                 </button>
 
-                <!-- Backup / Export -->
-                <button onclick="openBackupModal()" class="inline-flex items-center gap-2 px-3.5 py-2.5 text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl hover:bg-slate-50 dark:hover:bg-white/10 transition-all" title="Backup JSON & Export Excel">
+                <!-- Share to WhatsApp with Image -->
+                <button onclick="shareToWhatsAppWithImage()" class="inline-flex items-center gap-2 px-3.5 py-2.5 text-xs sm:text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-500 rounded-xl transition-all shadow-emerald-glow" title="Unduh Struk Gambar & Kirim ke WhatsApp">
+                    <i data-lucide="image" class="w-4 h-4"></i>
+                    <span class="hidden md:inline">Share Struk ke WA</span>
+                </button>
+
+                <button onclick="openBackupModal()" class="inline-flex items-center gap-2 px-3.5 py-2.5 text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl hover:bg-slate-50 dark:hover:bg-white/10 transition-all" title="Backup & Excel">
                     <i data-lucide="hard-drive-download" class="w-4 h-4 text-emerald-500"></i>
                     <span class="hidden md:inline">Backup / Excel</span>
                 </button>
 
-                <!-- Print / PDF -->
                 <button onclick="printLedger()" class="inline-flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-bold text-obsidian-950 bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 hover:from-amber-400 hover:to-amber-500 rounded-xl transition-all shadow-gold-glow">
                     <i data-lucide="printer" class="w-4 h-4"></i>
-                    <span>Cetak Laporan</span>
+                    <span>Cetak</span>
                 </button>
             </div>
         </div>
@@ -147,10 +142,8 @@
     <!-- Main Workspace -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
 
-        <!-- Control Bar: Period Switcher & View Tabs -->
         <div class="bg-white/90 dark:bg-obsidian-900/90 backdrop-blur-md p-4 rounded-2xl border border-slate-200/80 dark:border-white/10 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 no-print">
             
-            <!-- Left: Period Selector -->
             <div class="flex flex-wrap items-center gap-2.5">
                 <span class="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mr-1 flex items-center gap-1.5">
                     <i data-lucide="calendar" class="w-3.5 h-3.5 text-amber-500"></i>
@@ -159,7 +152,6 @@
                 
                 <div class="relative">
                     <select id="period-select" onchange="switchPeriod(this.value)" class="appearance-none bg-slate-100 dark:bg-obsidian-800 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-bold text-sm rounded-xl pl-4 pr-10 py-2.5 focus:outline-none focus:ring-2 focus:ring-amber-400/50 cursor-pointer transition-all">
-                        <!-- Options injected via JS -->
                     </select>
                     <i data-lucide="chevron-down" class="w-4 h-4 text-slate-500 dark:text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
                 </div>
@@ -169,12 +161,11 @@
                     <span>Bulan Baru</span>
                 </button>
 
-                <button onclick="openEditPeriodModal()" class="p-2.5 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 rounded-xl border border-transparent dark:border-white/5 transition-all" title="Ubah Nama Periode / Saldo Awal">
+                <button onclick="openEditPeriodModal()" class="p-2.5 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 rounded-xl border border-transparent dark:border-white/5 transition-all" title="Ubah Nama Periode">
                     <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
                 </button>
             </div>
 
-            <!-- Right: Segmented View Switcher -->
             <div class="flex items-center bg-slate-100 dark:bg-obsidian-950 p-1 rounded-xl border border-slate-200/80 dark:border-white/10 self-start md:self-auto">
                 <button id="btn-view-dashboard" onclick="setViewMode('dashboard')" class="flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all bg-white dark:bg-obsidian-800 text-slate-900 dark:text-amber-300 shadow-sm">
                     <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
@@ -187,13 +178,11 @@
             </div>
         </div>
 
-        <!-- ==================== VIEW 1: EXECUTIVE DASHBOARD ==================== -->
+        <!-- VIEW 1: EXECUTIVE DASHBOARD -->
         <div id="view-dashboard" class="space-y-6 no-print">
 
-            <!-- Hero Financial Overview (Luxury Bento Grid) -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
                 
-                <!-- Featured Main Balance Card (4 cols) -->
                 <div class="lg:col-span-4 luxury-card rounded-3xl p-6 text-white shadow-luxury relative overflow-hidden flex flex-col justify-between">
                     <div class="absolute -right-12 -top-12 w-40 h-40 rounded-full bg-amber-400/15 blur-2xl pointer-events-none"></div>
                     <div class="absolute -left-12 -bottom-12 w-36 h-36 rounded-full bg-emerald-500/10 blur-2xl pointer-events-none"></div>
@@ -215,7 +204,6 @@
                         <p class="text-xs text-slate-400 mt-1.5">Sisa kas siap diteruskan ke periode berikutnya</p>
                     </div>
 
-                    <!-- Cash Utilization Bar -->
                     <div class="relative z-10 pt-3 border-t border-white/10">
                         <div class="flex justify-between text-[11px] mb-1.5">
                             <span class="text-slate-400">Rasio Pemakaian Dana</span>
@@ -227,10 +215,8 @@
                     </div>
                 </div>
 
-                <!-- 4 Detailed Metric Cards (8 cols -> 2x2 grid) -->
                 <div class="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
                     
-                    <!-- Card 1: Saldo Awal -->
                     <div onclick="openEditPeriodModal()" class="bg-white dark:bg-obsidian-900/90 p-5 rounded-3xl border border-slate-200/80 dark:border-white/10 hover:border-amber-400/50 transition-all cursor-pointer group flex flex-col justify-between shadow-sm">
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Saldo Awal Periode</span>
@@ -247,7 +233,6 @@
                         </div>
                     </div>
 
-                    <!-- Card 2: Pemasukan Baru -->
                     <div class="bg-white dark:bg-obsidian-900/90 p-5 rounded-3xl border border-slate-200/80 dark:border-white/10 flex flex-col justify-between shadow-sm">
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Pemasukan Bulan Ini</span>
@@ -261,7 +246,6 @@
                         </div>
                     </div>
 
-                    <!-- Card 3: Total Dana Tersedia -->
                     <div class="bg-white dark:bg-obsidian-900/90 p-5 rounded-3xl border border-slate-200/80 dark:border-white/10 flex flex-col justify-between shadow-sm">
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">Total Dana Tersedia</span>
@@ -275,7 +259,6 @@
                         </div>
                     </div>
 
-                    <!-- Card 4: Total Pengeluaran -->
                     <div class="bg-white dark:bg-obsidian-900/90 p-5 rounded-3xl border border-slate-200/80 dark:border-white/10 flex flex-col justify-between shadow-sm">
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400">Total Pengeluaran</span>
@@ -292,10 +275,8 @@
                 </div>
             </div>
 
-            <!-- Interactive Ledger Workspace (2 Columns) -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 
-                <!-- LEFT COLUMN (5 cols): PEMASUKAN -->
                 <section class="lg:col-span-5 bg-white dark:bg-obsidian-900/90 rounded-3xl border border-slate-200/80 dark:border-white/10 shadow-sm overflow-hidden">
                     <div class="p-5 border-b border-slate-100 dark:border-white/10 flex items-center justify-between gap-2">
                         <div>
@@ -311,11 +292,8 @@
                         </button>
                     </div>
 
-                    <div class="divide-y divide-slate-100 dark:divide-white/5" id="income-list-container">
-                        <!-- Income rows injected via JS -->
-                    </div>
+                    <div class="divide-y divide-slate-100 dark:divide-white/5" id="income-list-container"></div>
 
-                    <!-- Summary Footer -->
                     <div class="p-5 bg-slate-50/80 dark:bg-obsidian-950/60 border-t border-slate-200/80 dark:border-white/10 space-y-2 text-xs">
                         <div class="flex justify-between text-slate-500 dark:text-slate-400">
                             <span>Saldo Awal</span>
@@ -332,7 +310,6 @@
                     </div>
                 </section>
 
-                <!-- RIGHT COLUMN (7 cols): PENGELUARAN -->
                 <section class="lg:col-span-7 bg-white dark:bg-obsidian-900/90 rounded-3xl border border-slate-200/80 dark:border-white/10 shadow-sm overflow-hidden">
                     <div class="p-5 border-b border-slate-100 dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div>
@@ -364,13 +341,10 @@
                                     <th class="py-3.5 px-5 text-center w-24">Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody id="expense-table-body" class="divide-y divide-slate-100 dark:divide-white/5 text-sm">
-                                <!-- Expense rows injected via JS -->
-                            </tbody>
+                            <tbody id="expense-table-body" class="divide-y divide-slate-100 dark:divide-white/5 text-sm"></tbody>
                         </table>
                     </div>
 
-                    <!-- Expense Summary Footer -->
                     <div class="p-5 bg-slate-50/80 dark:bg-obsidian-950/60 border-t border-slate-200/80 dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                         <div class="text-xs text-slate-500 dark:text-slate-400">
                             Total Pengeluaran: <strong id="footer-total-pengeluaran" class="text-rose-600 dark:text-rose-400 font-mono text-sm">Rp 0</strong>
@@ -384,11 +358,10 @@
             </div>
         </div>
 
-        <!-- ==================== VIEW 2: CLASSIC NOTEBOOK / PRINT LEDGER ==================== -->
+        <!-- VIEW 2: CLASSIC NOTEBOOK / PRINT LEDGER (Digunakan sbg template gambar struk) -->
         <div id="view-ledger" class="hidden print-only">
-            <div class="max-w-2xl mx-auto bg-white text-slate-900 p-6 sm:p-10 rounded-3xl border border-slate-200 shadow-xl print-container">
+            <div id="receipt-card" class="max-w-2xl mx-auto bg-white text-slate-900 p-6 sm:p-10 rounded-3xl border border-slate-200 shadow-xl print-container">
                 
-                <!-- Ledger Document Header -->
                 <div class="flex flex-col items-center text-center border-b-2 border-slate-900 pb-5 mb-6">
                     <div id="ledger-logo-container" class="w-16 h-16 rounded-full bg-black border-2 border-slate-900 shadow-md flex items-center justify-center overflow-hidden mb-3"></div>
                     <p id="ledger-brand-title" class="text-xs font-extrabold uppercase tracking-widest text-slate-600 mb-0.5">BUKU KAS GURU</p>
@@ -396,19 +369,15 @@
                     <h2 id="ledger-period-title" class="text-2xl font-extrabold text-slate-900 underline decoration-2 underline-offset-4">Oktober 2026</h2>
                 </div>
 
-                <!-- Saldo Awal Row -->
                 <div class="flex items-center justify-between py-3 px-4 bg-slate-50 rounded-xl border border-slate-200 mb-6 font-bold text-base">
                     <span>Saldo Awal</span>
                     <span class="text-slate-400">→</span>
                     <span id="ledger-saldo-awal" class="font-mono tabular-nums text-slate-900">Rp 0</span>
                 </div>
 
-                <!-- Pemasukan Section -->
                 <div class="mb-6">
                     <h3 class="font-extrabold text-slate-900 underline underline-offset-4 mb-3 text-base">Pemasukan :</h3>
-                    <div id="ledger-income-rows" class="space-y-2 pl-2 sm:pl-4 text-sm sm:text-base">
-                        <!-- Injected dynamically -->
-                    </div>
+                    <div id="ledger-income-rows" class="space-y-2 pl-2 sm:pl-4 text-sm sm:text-base"></div>
                     <div class="mt-4 pt-3 border-t-2 border-dashed border-slate-300 flex items-center justify-between font-extrabold text-base sm:text-lg px-2">
                         <span>Total <span class="text-xs font-normal text-slate-500">(Saldo Awal + Pemasukan)</span></span>
                         <span class="text-slate-400">→</span>
@@ -416,12 +385,9 @@
                     </div>
                 </div>
 
-                <!-- Pengeluaran Section -->
                 <div class="mb-6 pt-2">
                     <h3 class="font-extrabold text-slate-900 underline underline-offset-4 mb-3 text-base">Pengeluaran :</h3>
-                    <div id="ledger-expense-rows" class="space-y-3 pl-2 sm:pl-4 text-sm sm:text-base">
-                        <!-- Injected dynamically -->
-                    </div>
+                    <div id="ledger-expense-rows" class="space-y-3 pl-2 sm:pl-4 text-sm sm:text-base"></div>
                     <div class="mt-4 pt-3 border-t-2 border-dashed border-slate-300 flex items-center justify-between font-extrabold text-base px-2">
                         <span>Total Pengeluaran</span>
                         <span class="text-slate-400">→</span>
@@ -429,14 +395,12 @@
                     </div>
                 </div>
 
-                <!-- Final Balance Box -->
                 <div class="mt-8 p-4 bg-slate-900 text-white rounded-2xl flex items-center justify-between font-extrabold text-lg sm:text-xl">
                     <span>Saldo Akhir</span>
                     <span class="text-amber-400">→</span>
                     <span id="ledger-saldo-akhir" class="font-mono tabular-nums text-amber-300">Rp 0</span>
                 </div>
 
-                <!-- Signature / Print Footer -->
                 <div class="mt-8 pt-4 border-t border-slate-200 flex justify-between items-end text-xs text-slate-500">
                     <div>
                         <p>Dicetak pada: <span id="ledger-print-date"></span></p>
@@ -459,9 +423,7 @@
         <p class="mt-1 sm:mt-0">Siap GitHub & Cloudflare Pages</p>
     </footer>
 
-    <!-- ==================== MODALS ==================== -->
-
-    <!-- 1. Modal Add/Edit Pemasukan -->
+    <!-- MODALS -->
     <div id="modal-income" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 hidden items-center justify-center p-4 no-print">
         <div class="bg-white dark:bg-obsidian-900 rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 dark:border-white/10">
             <div class="flex items-center justify-between mb-5">
@@ -493,7 +455,6 @@
         </div>
     </div>
 
-    <!-- 2. Modal Add/Edit Pengeluaran -->
     <div id="modal-expense" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 hidden items-center justify-center p-4 no-print">
         <div class="bg-white dark:bg-obsidian-900 rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 dark:border-white/10">
             <div class="flex items-center justify-between mb-5">
@@ -536,7 +497,6 @@
         </div>
     </div>
 
-    <!-- 3. Modal New Period (Bulan Baru) -->
     <div id="modal-new-period" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 hidden items-center justify-center p-4 no-print">
         <div class="bg-white dark:bg-obsidian-900 rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 dark:border-white/10">
             <div class="flex items-center justify-between mb-5">
@@ -567,7 +527,6 @@
         </div>
     </div>
 
-    <!-- 4. Modal Edit Current Period -->
     <div id="modal-edit-period" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 hidden items-center justify-center p-4 no-print">
         <div class="bg-white dark:bg-obsidian-900 rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 dark:border-white/10">
             <div class="flex items-center justify-between mb-5">
@@ -598,7 +557,6 @@
         </div>
     </div>
 
-    <!-- 5. Modal Edit Brand / Group Name & Logo -->
     <div id="modal-brand" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 hidden items-center justify-center p-4 no-print">
         <div class="bg-white dark:bg-obsidian-900 rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 dark:border-white/10">
             <div class="flex items-center justify-between mb-5">
@@ -608,7 +566,6 @@
                 </button>
             </div>
             <form onsubmit="saveBrandSettings(event)" class="space-y-4">
-                <!-- Logo Preview & Upload -->
                 <div class="flex items-center gap-4 p-3.5 rounded-2xl bg-slate-50 dark:bg-obsidian-800 border border-slate-200 dark:border-white/10">
                     <div id="modal-logo-preview" class="w-16 h-16 rounded-full bg-black border-2 border-amber-400/60 flex items-center justify-center overflow-hidden shrink-0"></div>
                     <div class="space-y-1.5">
@@ -642,7 +599,6 @@
         </div>
     </div>
 
-    <!-- 6. Modal Backup, Export CSV & Restore -->
     <div id="modal-backup" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 hidden items-center justify-center p-4 no-print">
         <div class="bg-white dark:bg-obsidian-900 rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 dark:border-white/10">
             <div class="flex items-center justify-between mb-4">
@@ -653,7 +609,7 @@
             </div>
             <div class="space-y-3 text-sm">
                 <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                    Seluruh data tersimpan aman secara mandiri di perangkat Anda (tanpa biaya server bulanan). Gunakan menu di bawah untuk ekspor ke Excel atau pindah perangkat.
+                    Seluruh data tersimpan aman secara mandiri di perangkat Anda. Gunakan menu di bawah untuk ekspor ke Excel atau pindah perangkat.
                 </p>
 
                 <button onclick="exportToCSV()" class="w-full flex items-center justify-between p-3.5 rounded-2xl border border-slate-200 dark:border-white/10 hover:border-emerald-400/60 bg-slate-50/50 dark:bg-white/[0.02] hover:bg-emerald-500/10 transition-all text-left">
@@ -708,29 +664,24 @@
         </div>
     </div>
 
-    <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+    <!-- JAVASCRIPT LOGIC -->
     <script>
         const STORAGE_KEY = 'buku_kas_guru_gr_v4';
         const THEME_KEY = 'buku_kas_guru_theme';
 
-        // Crisp Vector SVG Logo matching "GR community" emblem
         const DEFAULT_GR_LOGO_SVG = `
             <svg viewBox="0 0 200 200" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="100" cy="100" r="98" fill="#050505"/>
                 <circle cx="100" cy="100" r="87" fill="none" stroke="#FFFFFF" stroke-width="6.5"/>
-                <!-- Monogram G & R -->
                 <text x="61" y="99" font-family="'Playfair Display', Georgia, serif" font-weight="800" font-size="56" fill="#FFFFFF">G</text>
                 <text x="92" y="116" font-family="'Playfair Display', Georgia, serif" font-weight="800" font-size="56" fill="#FFFFFF">R</text>
-                <!-- Calligraphic Diagonal Flourish Line -->
                 <path d="M 70 120 C 86 125, 114 62, 130 65" fill="none" stroke="#FFFFFF" stroke-width="4.2" stroke-linecap="round"/>
                 <circle cx="69" cy="119" r="3.6" fill="#FFFFFF"/>
                 <circle cx="131" cy="66" r="3.6" fill="#FFFFFF"/>
-                <!-- Subtitle 'community' -->
                 <text x="100" y="148" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="16.5" letter-spacing="0.4" fill="#FFFFFF">community</text>
             </svg>
         `;
 
-        // Pre-populated Data matching exact user notebook images
         const defaultState = {
             brandTitle: 'Buku Kas Guru',
             brandSubtitle: 'GR Community • Sistem Pembukuan Kas & Sosial',
@@ -772,7 +723,6 @@
         let currentView = 'dashboard';
         let tempLogoData = null;
 
-        // Initialize Theme (Default to Luxury Dark)
         function initTheme() {
             const savedTheme = localStorage.getItem(THEME_KEY) || 'dark';
             if (savedTheme === 'dark') {
@@ -853,12 +803,10 @@
             const period = getActivePeriod();
             const metrics = calculateMetrics(period);
 
-            // Render Logos across Header & Print Ledger
             const logoMarkup = getLogoHtml();
             document.getElementById('header-logo-container').innerHTML = logoMarkup;
             document.getElementById('ledger-logo-container').innerHTML = logoMarkup;
 
-            // Brand Info
             document.title = `${appState.brandTitle} — GR Community`;
             document.getElementById('brand-title').textContent = appState.brandTitle;
             document.getElementById('brand-subtitle').textContent = appState.brandSubtitle || 'GR Community • Sistem Pembukuan Kas & Sosial';
@@ -868,13 +816,11 @@
             document.getElementById('year-now').textContent = new Date().getFullYear();
             document.getElementById('hero-period-badge').textContent = period.name;
 
-            // Period Selector
             const select = document.getElementById('period-select');
             select.innerHTML = appState.periods.map(p => 
                 `<option value="${p.id}" ${p.id === period.id ? 'selected' : ''}>${escapeHtml(p.name)}</option>`
             ).join('');
 
-            // Summary Cards & Hero
             document.getElementById('stat-saldo-akhir').textContent = formatRupiah(metrics.finalBalance);
             document.getElementById('stat-usage-ratio').textContent = `${metrics.usageRatio}% terpakai`;
             document.getElementById('stat-usage-bar').style.width = `${metrics.usageRatio}%`;
@@ -886,7 +832,6 @@
             document.getElementById('stat-pengeluaran').textContent = '- ' + formatRupiah(metrics.totalExpense);
             document.getElementById('stat-pengeluaran-count').textContent = `${period.expenses.length} transaksi keluar`;
 
-            // Income List
             const incomeContainer = document.getElementById('income-list-container');
             if (period.incomes.length === 0) {
                 incomeContainer.innerHTML = `
@@ -913,12 +858,10 @@
                 `).join('');
             }
 
-            // Income Footers
             document.getElementById('footer-saldo-awal').textContent = formatRupiah(metrics.initialBalance);
             document.getElementById('footer-pemasukan-baru').textContent = '+ ' + formatRupiah(metrics.totalIncome);
             document.getElementById('footer-total-dana').textContent = formatRupiah(metrics.totalAvailable);
 
-            // Expense Table
             const keyword = (document.getElementById('search-expense').value || '').toLowerCase().trim();
             const filteredExpenses = period.expenses.filter(item => 
                 item.title.toLowerCase().includes(keyword) || 
@@ -960,11 +903,9 @@
                 `).join('');
             }
 
-            // Expense Footers
             document.getElementById('footer-total-pengeluaran').textContent = formatRupiah(metrics.totalExpense);
             document.getElementById('footer-saldo-akhir').textContent = formatRupiah(metrics.finalBalance);
 
-            // Classic Ledger View
             document.getElementById('ledger-period-title').textContent = period.name;
             document.getElementById('ledger-saldo-awal').textContent = formatRupiah(metrics.initialBalance);
             document.getElementById('ledger-total-dana').textContent = formatRupiah(metrics.totalAvailable);
@@ -1007,7 +948,62 @@
             }
         }
 
-        // ==================== VIEW & PERIOD ACTIONS ====================
+        // ==================== AUTO GENERATE IMAGE & SHARE TO WHATSAPP ====================
+        async function shareToWhatsAppWithImage() {
+            const period = getActivePeriod();
+            const metrics = calculateMetrics(period);
+            const receiptEl = document.getElementById('receipt-card');
+
+            showToast('Menyiapkan gambar struk laporan...');
+
+            // Tampilkan elemen struk sebentar di layar secara transparan agar html2canvas bisa merendernya dengan sempurna
+            receiptEl.parentElement.classList.remove('hidden');
+            receiptEl.parentElement.style.position = 'absolute';
+            receiptEl.parentElement.style.left = '-9999px';
+
+            try {
+                const canvas = await html2canvas(receiptEl, {
+                    scale: 2, // Resolusi tinggi agar tajam
+                    backgroundColor: '#ffffff',
+                    useCORS: true
+                });
+
+                // Ubah canvas menjadi file gambar (.png) dan unduh otomatis ke HP/PC
+                const imageURL = canvas.toDataURL('image/png');
+                const downloadLink = document.createElement('a');
+                downloadLink.href = imageURL;
+                downloadLink.download = `Struk-Kas-${period.name.replace(/\s+/g, '-')}.png`;
+                downloadLink.click();
+
+                // Kembalikan elemen struk ke mode tersembunyi
+                receiptEl.parentElement.classList.add('hidden');
+                receiptEl.parentElement.style.position = '';
+                receiptEl.parentElement.style.left = '';
+
+                // Susun format pesan teks pengantar WhatsApp
+                let text = `📋 *LAPORAN KAS - ${appState.brandTitle.toUpperCase()}*\n`;
+                text += `📅 Periode: *${period.name}*\n\n`;
+                text += `💰 Saldo Awal: *${formatRupiah(metrics.initialBalance)}*\n`;
+                text += `📥 Total Pemasukan: *+ ${formatRupiah(metrics.totalIncome)}*\n`;
+                text += `📤 Total Pengeluaran: *- ${formatRupiah(metrics.totalExpense)}*\n`;
+                text += `💎 *SALDO AKHIR BERSIH: ${formatRupiah(metrics.finalBalance)}*\n\n`;
+                text += `_📎 Gambar struk laporan kas telah diunduh otomatis ke perangkat Anda. Silakan lampirkan gambar tersebut bersama pesan ini di grup._`;
+
+                const encodedText = encodeURIComponent(text);
+                const waUrl = `https://api.whatsapp.com/send?text=${encodedText}`;
+                
+                setTimeout(() => {
+                    window.open(waUrl, '_blank');
+                    showToast('Struk diunduh & WhatsApp dibuka!');
+                }, 1000);
+
+            } catch (error) {
+                receiptEl.parentElement.classList.add('hidden');
+                receiptEl.parentElement.style.position = '';
+                receiptEl.parentElement.style.left = '';
+                showToast('Gagal membuat gambar struk', 'error');
+            }
+        }
 
         function setViewMode(mode) {
             currentView = mode;
@@ -1041,8 +1037,6 @@
         function printLedger() {
             window.print();
         }
-
-        // ==================== CRUD: PEMASUKAN ====================
 
         function openIncomeModal(id = null) {
             const period = getActivePeriod();
@@ -1095,8 +1089,6 @@
             renderApp();
             showToast('Item pemasukan dihapus');
         }
-
-        // ==================== CRUD: PENGELUARAN ====================
 
         function openExpenseModal(id = null) {
             const period = getActivePeriod();
@@ -1160,8 +1152,6 @@
             renderApp();
             showToast('Catatan pengeluaran dihapus');
         }
-
-        // ==================== PERIOD & BRAND MANAGEMENT ====================
 
         function openNewPeriodModal() {
             const period = getActivePeriod();
@@ -1269,8 +1259,6 @@
             showToast('Identitas & logo berhasil disimpan');
         }
 
-        // ==================== BACKUP, CSV & RESTORE ====================
-
         function openBackupModal() {
             openModal('modal-backup');
         }
@@ -1353,8 +1341,6 @@
             showToast('Data dikembalikan ke contoh awal');
         }
 
-        // ==================== UI HELPERS ====================
-
         function openModal(id) {
             const el = document.getElementById(id);
             el.classList.remove('hidden');
@@ -1396,7 +1382,6 @@
                 .replace(/"/g, '&quot;');
         }
 
-        // Init
         initTheme();
         window.addEventListener('DOMContentLoaded', () => {
             renderApp();
