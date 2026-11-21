@@ -1,12 +1,3 @@
-// PASANG (sekali saja) di Cloudflare:
-// 1. Workers & Pages > KV > Create namespace (mis. "kas").
-// 2. Pages project > Settings > Bindings > KV namespace: nama variabel KAS -> pilih namespace tadi.
-// 3. Pages project > Settings > Variables and Secrets: secret ADMIN_PASSWORD (password awal bendahara).
-//    Setelah password diganti dari aplikasi (Backup > Ganti password), password baru disimpan (hash) di KV
-//    dan menggantikan ADMIN_PASSWORD.
-// 4. Deploy ulang. Salinan harian otomatis tersimpan di KV ("bak:YYYY-MM-DD", 60 hari).
-// Keamanan: 5 kali salah password dari satu alamat IP = diblokir 15 menit.
-
 const H = { 'content-type': 'application/json', 'cache-control': 'no-store' };
 const out = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: H });
 const hash = async s => [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode('kas:' + s)))].map(x => x.toString(16).padStart(2, '0')).join('');
@@ -17,20 +8,21 @@ async function ok(req, env) {
   const h = await env.KAS.get('pwh');
   return h ? (await hash(pw)) === h : !!env.ADMIN_PASSWORD && pw === String(env.ADMIN_PASSWORD).trim();
 }
-// null = boleh lanjut; selain itu = respons penolakan
+
 async function guard(req, env) {
   if (!env.ADMIN_PASSWORD && !(await env.KAS.get('pwh'))) return out({ error: 'ADMIN_PASSWORD belum diatur' }, 500);
   const k = 'fail:' + (req.headers.get('cf-connecting-ip') || 'x'), n = +((await env.KAS.get(k)) || 0);
   if (n >= 5) return out({ error: 'Terlalu banyak percobaan. Coba lagi 15 menit lagi.' }, 429);
-  if (!raw) return out({ periods: [], log: [] });
+  if (await ok(req, env)) return null;
   await env.KAS.put(k, String(n + 1), { expirationTtl: 900 });
   return out({ error: 'Password salah' }, 401);
-if (!raw) return out({ periods: [], log: [] });
+}
 
-// Orang biasa tidak menerima daftar anggota (status bayar) dan riwayat perubahan; hanya bendahara.
+// INI BAGIAN YANG TADI SALAH TEMPAT
 export async function onRequestGet({ request, env }) {
   const raw = await env.KAS.get('state');
-  if (!raw) return new Response('null', { headers: H });
+  if (!raw) return out({ periods: [], log: [] }); // <--- INI YANG BENAR
+  
   if (await ok(request, env)) return new Response(raw, { headers: H });
   const d = JSON.parse(raw);
   d.periods.forEach(p => delete p.mem);
@@ -38,7 +30,6 @@ export async function onRequestGet({ request, env }) {
   return out(d);
 }
 
-// Cek password; dengan body {"new":"..."} juga mengganti password
 export async function onRequestPost({ request, env }) {
   const g = await guard(request, env);
   if (g) return g;
