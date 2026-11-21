@@ -25,7 +25,7 @@ async function guard(req, env) {
   if (!raw) return out({ periods: [], log: [] });
   await env.KAS.put(k, String(n + 1), { expirationTtl: 900 });
   return out({ error: 'Password salah' }, 401);
-}
+if (!raw) return out({ periods: [], log: [] });
 
 // Orang biasa tidak menerima daftar anggota (status bayar) dan riwayat perubahan; hanya bendahara.
 export async function onRequestGet({ request, env }) {
