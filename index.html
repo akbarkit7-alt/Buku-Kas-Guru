@@ -195,5 +195,8 @@ catch(e){if(e&&e.name!=='AbortError')toast('Gagal membuat gambar struk','e')}fin
 (async()=>{if(PW){try{const r=await fetch('/api/data',{method:'POST',headers:{'x-admin':PW}});admin=r.ok;if(!r.ok){PW='';sessionStorage.removeItem('kas_pw')}}catch{}}
 setView(admin?'dash':'book');await load();setInterval(()=>{if(!admin&&!document.hidden)load()},60000)})();
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
-</script></body></html>
-. 
+</script>
+</body>
+</html>
+
+
