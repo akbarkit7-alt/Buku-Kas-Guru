@@ -18,10 +18,9 @@ async function guard(req, env) {
   return out({ error: 'Password salah' }, 401);
 }
 
-// INI BAGIAN YANG TADI SALAH TEMPAT
 export async function onRequestGet({ request, env }) {
   const raw = await env.KAS.get('state');
-  if (!raw) return out({ periods: [], log: [] }); // <--- INI YANG BENAR
+  if (!raw) return out({ periods: [], log: [] }); 
   
   if (await ok(request, env)) return new Response(raw, { headers: H });
   const d = JSON.parse(raw);
