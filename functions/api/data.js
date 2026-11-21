@@ -22,7 +22,7 @@ async function guard(req, env) {
   if (!env.ADMIN_PASSWORD && !(await env.KAS.get('pwh'))) return out({ error: 'ADMIN_PASSWORD belum diatur' }, 500);
   const k = 'fail:' + (req.headers.get('cf-connecting-ip') || 'x'), n = +((await env.KAS.get(k)) || 0);
   if (n >= 5) return out({ error: 'Terlalu banyak percobaan. Coba lagi 15 menit lagi.' }, 429);
-  if (await ok(req, env)) return null;
+  if (!raw) return out({ periods: [], log: [] });
   await env.KAS.put(k, String(n + 1), { expirationTtl: 900 });
   return out({ error: 'Password salah' }, 401);
 }
